@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results Management - ITI College CBT</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/teacher.css" />
+</head>
+<body>
+  <nav class="teacher-navbar">
+    <div class="teacher-brand">
+      <img src="images/xeena_logo.png" alt="XEENA Institute Logo" class="college-logo-img" style="width: 36px; height: 36px;" />
+      <div>
+        <h2 style="font-size: 15px; font-weight: 700; color: #ffffff; line-height: 1.2;">Faculty Portal</h2>
+        <span class="college-name-display" style="font-size: 11px; color: #94a3b8;">XEENA INSTITUTE OF SKILL DEVELOPMENT</span>
+      </div>
+    </div>
+    <ul class="teacher-nav-links">
+      <li><a href="teacher-dashboard.html">📊 Overview</a></li>
+      <li><a href="exam-create.html">➕ Create Exam</a></li>
+      <li><a href="question-manager.html">❓ Question Bank</a></li>
+      <li><a href="results.html" class="active">📈 Results</a></li>
+      <li><a href="students-manager.html">👥 Students</a></li>
+      <li><a href="settings.html">⚙️ Settings &amp; Audit</a></li>
+    </ul>
+    <div>
+      <a href="teacher-dashboard.html" class="btn btn-sm btn-secondary" style="background: rgba(255,255,255,0.1); color: #fff; border: none;">← Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="teacher-wrapper">
+    <div class="page-header" style="flex-wrap: wrap; gap: 16px;">
+      <div class="page-title">
+        <h1>Monthly Assessment &amp; Results Panel Board <span style="font-size: 16px; color: var(--primary); font-weight: normal;">(প্যানেল বোর্ড রেজাল্ট)</span></h1>
+        <p>XEENA INSTITUTE OF SKILL DEVELOPMENT • প্রতি মাসের পরীক্ষার সার্বিক ফলাফল ও ছাত্রছাত্রীদের অগ্রগতি পর্যবেক্ষণ</p>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <button type="button" id="exportCsvBtn" class="btn btn-success btn-lg" style="display: flex; align-items: center; gap: 8px; font-weight: 700; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);">
+          <span>📊</span> সরাসরি Excel Sheet এ ডাউনলোড করুন (.CSV)
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI Summary Overview for Faculty Panel Board -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <div class="stat-card" style="border-left: 4px solid var(--primary);">
+        <span class="stat-label">মোট মূল্যায়ন (Total Submissions)</span>
+        <div class="stat-value" id="kpiTotalSubmissions">0</div>
+        <small style="color: var(--text-muted); font-size: 12px;">জমা দেওয়া খাতা</small>
+      </div>
+
+      <div class="stat-card" style="border-left: 4px solid var(--success);">
+        <span class="stat-label">উত্তীর্ণ ছাত্রছাত্রী (Passed)</span>
+        <div class="stat-value" id="kpiPassedCount" style="color: var(--success);">0</div>
+        <small id="kpiPassRate" style="color: var(--success); font-weight: 600; font-size: 12px;">Pass Rate: 0%</small>
+      </div>
+
+      <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+        <span class="stat-label">গড় প্রাপ্ত নম্বর (Average Score)</span>
+        <div class="stat-value" id="kpiAvgScore" style="color: #d97706;">0</div>
+        <small style="color: var(--text-muted); font-size: 12px;">ব্যাচ গড় পারফরম্যান্স</small>
+      </div>
+
+      <div class="stat-card" style="border-left: 4px solid #8b5cf6;">
+        <span class="stat-label">শীর্ষ পরীক্ষার্থী (Top Scorer)</span>
+        <div class="stat-value" id="kpiTopScorer" style="font-size: 18px; line-height: 1.3; color: #6d28d9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          Ranit Biswas (40/40)
+        </div>
+        <small style="color: #6d28d9; font-weight: 600; font-size: 12px;">সর্বোচ্চ নম্বর অর্জনকারী</small>
+      </div>
+    </div>
+
+    <!-- Results Publication Control Banner for Faculty -->
+    <div id="resultsReleaseCard" style="background: #ffffff; border-radius: var(--radius-lg); padding: 18px 22px; margin-bottom: 24px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="max-width: 600px;">
+        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+          <span>📢</span> শিক্ষার্থী ফলাফল প্রকাশ নিয়ন্ত্রণ (Student Result Release Switch)
+        </h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4;">
+          পরীক্ষা শেষ হলে ছাত্রছাত্রীরা শুধুমাত্র <strong>সাবমিশন রিসিপ্ট</strong> দেখতে পাবে, কোনো নম্বর দেখতে পাবে না। শিক্ষক মহাশয় খাতা যাচাই করার পর নিচের সুইচ দিয়ে ফলাফল উন্মুক্ত বা গোপন রাখতে পারেন।
+        </p>
+      </div>
+      <div id="examReleaseToggles" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <span style="font-size: 13px; color: var(--text-muted);">Loading exam release status...</span>
+      </div>
+    </div>
+
+    <!-- Panel Board Filters & Data Table -->
+    <div class="data-table-card">
+      <div class="data-table-header" style="flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; padding-bottom: 16px;">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; flex: 1; max-width: 780px;">
+          <!-- Monthly Assessment Filter -->
+          <div style="min-width: 190px;">
+            <select id="monthFilterSelect" class="form-control" style="font-weight: 600; background: #f8fafc;">
+              <option value="ALL">📅 সব মাসের পরীক্ষা (All Months)</option>
+              <option value="September 2026">September 2026</option>
+              <option value="October 2026">October 2026</option>
+              <option value="November 2026">November 2026</option>
+              <option value="December 2026">December 2026</option>
+            </select>
+          </div>
+
+          <!-- Trade Filter -->
+          <div style="min-width: 170px;">
+            <select id="tradeFilterSelect" class="form-control" style="background: #f8fafc;">
+              <option value="ALL">🛠️ সব ট্রেড (All Trades)</option>
+              <option value="COPA">COPA</option>
+              <option value="Electrician">Electrician</option>
+              <option value="Fitter">Fitter</option>
+              <option value="Welder">Welder</option>
+            </select>
+          </div>
+
+          <!-- Student Name / Admission No Search Input -->
+          <div style="flex: 1; min-width: 220px;">
+            <input 
+              type="text" 
+              id="searchResultInput" 
+              class="form-control" 
+              placeholder="Search student (e.g. Ranit Biswas, ITI2025010)..." 
+            />
+          </div>
+        </div>
+
+        <div>
+          <span id="resultsCountBadge" class="badge badge-primary" style="font-size: 13px; padding: 6px 12px;">
+            Showing Records
+          </span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Student Name (নাম)</th>
+              <th>Admission Form No</th>
+              <th>Examination &amp; Month (পরীক্ষা ও মাস)</th>
+              <th>Score / Total (প্রাপ্ত নম্বর)</th>
+              <th>Status (ফলাফল)</th>
+              <th>Submission Time (জমা)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTableBody">
+            <tr><td colspan="7" style="text-align: center; padding: 24px;">Loading submissions...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/teacher.js"></script>
+</body>
+</html>

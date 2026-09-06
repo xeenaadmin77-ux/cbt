@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Login - ITI College CBT Examination</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+  <!-- Top Header -->
+  <header class="top-bar">
+    <div class="college-brand">
+      <img src="images/xeena_logo.png" alt="XEENA Institute Logo" class="college-logo-img" />
+      <div class="college-titles">
+        <h1 class="college-name-display">XEENA INSTITUTE OF SKILL DEVELOPMENT</h1>
+        <p class="lab-name-display">Computer Based Test (CBT) Examination Lab</p>
+      </div>
+    </div>
+    <a href="index.html" class="btn btn-sm btn-secondary" style="background: rgba(255,255,255,0.15); color: #fff; border: none;">
+      ← Home
+    </a>
+  </header>
+
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="auth-icon">👨‍🎓</div>
+        <h2>Student Login</h2>
+        <p>Enter your examination hall credentials</p>
+      </div>
+
+      <div class="auth-card-body">
+        <div id="authAlert" class="alert alert-danger" style="display: none;"></div>
+
+        <form id="studentLoginForm" onsubmit="handleStudentLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="studentName">Student Username / Name <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(ইউজারনেম অথবা পুরো নাম)</span></label>
+            <input 
+              type="text" 
+              id="studentName" 
+              class="form-control" 
+              placeholder="e.g. ranit.biswas or Ranit Biswas" 
+              required 
+              autocomplete="username"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="admissionNumber">College Admission Form Number <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Password / পাসওয়ার্ড)</span></label>
+            <input 
+              type="text" 
+              id="admissionNumber" 
+              class="form-control" 
+              placeholder="e.g. XEENA2025010" 
+              required 
+              autocomplete="current-password"
+              style="text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;"
+            />
+            <small style="display: block; margin-top: 5px; font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+              🔑 <strong>পাসওয়ার্ড নির্দেশিকা:</strong> কলেজের অ্যাডমিশন ফর্ম নম্বরটি পাসওয়ার্ড হিসেবে প্রযোজ্য (Admission Form Number serves as password).
+            </small>
+          </div>
+
+          <!-- Quick Test Autofill for Ranit Biswas -->
+          <div style="margin-bottom: 16px; padding: 10px 12px; background: rgba(37, 99, 235, 0.06); border: 1px dashed rgba(37, 99, 235, 0.3); border-radius: 8px; font-size: 12px; color: var(--color-primary-dark); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <strong>ডেমো পরীক্ষার্থী:</strong> <code>ranit.biswas</code> / <code>XEENA2025010</code>
+            </div>
+            <button type="button" class="btn btn-sm btn-secondary" style="font-size: 11px; padding: 3px 8px;" onclick="document.getElementById('studentName').value='ranit.biswas'; document.getElementById('admissionNumber').value='XEENA2025010';">
+              অটোফিল
+            </button>
+          </div>
+
+          <div class="auth-notice">
+            <div class="auth-notice-icon">🔒</div>
+            <div>
+              <strong>Invigilator Notice:</strong> Please ensure your computer terminal is in full-screen mode before starting any exam.
+            </div>
+          </div>
+
+          <button type="submit" id="studentLoginBtn" class="btn btn-primary btn-lg" style="width: 100%;">
+            Sign In to Computer Lab CBT
+          </button>
+        </form>
+
+        <div class="auth-footer-links">
+          <span>Are you a faculty member? <a href="teacher-login.html">Teacher &amp; Invigilator Login</a></span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard - ITI College CBT Examination</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="top-bar">
+    <div class="college-brand">
+      <img src="images/xeena_logo.png" alt="XEENA Institute Logo" class="college-logo-img" />
+      <div class="college-titles">
+        <h1 class="college-name-display">XEENA INSTITUTE OF SKILL DEVELOPMENT</h1>
+        <p class="lab-name-display">Student Examination Dashboard</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button id="studentLogoutBtn" class="btn btn-sm btn-secondary" style="background: rgba(255,255,255,0.15); color: #fff; border: none;">
+        Sign Out
+      </button>
+    </div>
+  </header>
+
+  <main class="container dashboard-layout">
+    <!-- Student Profile Information Banner -->
+    <div class="student-bar">
+      <div class="student-meta">
+        <div id="profileAvatar" class="student-avatar">S</div>
+        <div class="student-details">
+          <h2 id="profileStudentName">Loading Student Profile...</h2>
+          <p id="profileAdmissionNumber">Admission No: ---</p>
+          <p id="profileTrade" style="color: var(--primary); font-weight: 600;">Trade: ---</p>
+        </div>
+      </div>
+      <div class="lab-info-pill" style="background: #e2e8f0; color: #1e293b; border: 1px solid #cbd5e1;">
+        <span>📍 Lab Terminal Active</span>
+      </div>
+    </div>
+
+    <!-- Available Examinations -->
+    <div class="section-title">
+      <span>📝 Available Examinations</span>
+    </div>
+
+    <div id="availableExamsGrid" class="exam-grid">
+      <!-- Injected via student.js -->
+    </div>
+
+    <div id="noExamsNotice" class="empty-state" style="display: none;">
+      <div style="font-size: 36px; margin-bottom: 12px;">📭</div>
+      <h3 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">No Active Examinations</h3>
+      <p>There are currently no scheduled or published exams for your trade. Please consult your laboratory instructor.</p>
+    </div>
+  </main>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>

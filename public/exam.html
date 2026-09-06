@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBT Examination - ITI Computer Lab</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/exam.css" />
+</head>
+<body class="exam-body">
+  <!-- Exam Header -->
+  <header class="exam-header">
+    <div class="exam-header-left">
+      <img src="images/xeena_logo.png" alt="XEENA Institute Logo" class="exam-college-logo-img" />
+      <div class="exam-title-box">
+        <h1 id="headerExamTitle">Loading Examination...</h1>
+        <p class="college-name-display">XEENA INSTITUTE OF SKILL DEVELOPMENT</p>
+      </div>
+    </div>
+
+    <div class="exam-header-center">
+      <div class="student-tag">
+        <span>Candidate:</span>
+        <strong id="headerStudentName">Student</strong>
+        <span id="headerAdmissionNumber" style="opacity: 0.8; font-size: 11px;">Adm: ---</span>
+      </div>
+
+      <!-- Server Authoritative Timer Box -->
+      <div id="examTimerBox" class="exam-timer-box">
+        <span>⏱️</span>
+        <span id="examTimerDisplay">--:--:--</span>
+      </div>
+    </div>
+
+    <div class="exam-header-right">
+      <button id="closeExamBtn" class="btn btn-sm btn-danger" type="button" title="Close examination (Teacher authorization required)">
+        ✕ Exit Exam
+      </button>
+    </div>
+  </header>
+
+  <!-- Network / Warning Banners -->
+  <div id="offlineStatusBanner" class="exam-alert-banner offline-banner" style="display: none;">
+    ⚠️ Terminal disconnected from local network. Reconnecting... Your answers are queued locally.
+  </div>
+
+  <div id="fullscreenWarningBanner" class="exam-alert-banner" style="display: none;">
+    ⚠️ Full-screen mode was exited. 
+    <button id="reEnterFullscreenBtn" class="btn btn-sm btn-danger" style="margin-left: 8px;">Re-enter Full-Screen</button>
+  </div>
+
+  <!-- Main CBT Grid -->
+  <main class="exam-container">
+    <!-- Question Area -->
+    <section class="exam-main-panel">
+      <div class="question-card">
+        <div class="question-header-bar">
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <div class="question-number-pill" id="currentQuestionNum">Question 1 of 1</div>
+            <div class="question-set-pill" id="currentQuestionSet" style="font-size: 12px; font-weight: 600; padding: 4px 10px; background: #e0e7ff; color: #3730a3; border-radius: 9999px;">Set A</div>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <div id="questionTimerBox" style="display: none; font-size: 13px; font-weight: 700; padding: 4px 12px; background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; border-radius: 9999px;">
+              ⏱️ প্রতি প্রশ্নের সময়: <span id="questionTimerCount">60</span>s
+            </div>
+            <div class="question-marks-pill" id="currentQuestionMarks">Marks: 1</div>
+          </div>
+        </div>
+
+        <div class="question-text-box" id="questionText">
+          Loading question text...
+        </div>
+
+        <!-- 4 Multiple Choice Options -->
+        <div class="options-list" id="optionsContainer">
+          <!-- Options injected dynamically by exam.js -->
+        </div>
+
+        <!-- Question Actions Bar -->
+        <div class="question-actions-bar">
+          <div style="display: flex; gap: 8px;">
+            <button type="button" id="markReviewBtn" class="btn btn-secondary">
+              ☆ Mark for Review
+            </button>
+            <button type="button" id="clearAnswerBtn" class="btn btn-secondary" style="color: var(--danger);">
+              Clear Choice
+            </button>
+          </div>
+
+          <div class="nav-buttons-group">
+            <button type="button" id="prevQuestionBtn" class="btn btn-secondary" disabled>
+              ← Previous
+            </button>
+            <button type="button" id="nextQuestionBtn" class="btn btn-primary">
+              Next Question →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side Question Palette -->
+    <aside class="exam-side-palette">
+      <div class="palette-header">
+        <h3>Question Palette (<span id="totalQuestionsBadge">0</span>)</h3>
+      </div>
+
+      <!-- Legend -->
+      <div class="palette-legend">
+        <div class="legend-item">
+          <div class="legend-dot answered"></div>
+          <span>Answered (<strong id="countAnswered">0</strong>)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot not-answered"></div>
+          <span>Not Answered (<strong id="countNotAnswered">0</strong>)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot marked"></div>
+          <span>Marked Review (<strong id="countMarked">0</strong>)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot current"></div>
+          <span>Current</span>
+        </div>
+      </div>
+
+      <!-- Question Jump Grid -->
+      <div class="palette-grid-wrapper">
+        <div id="paletteGrid" class="palette-grid">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Live Auto-save Toast Indicator -->
+      <div class="auto-save-indicator">
+        <span id="autoSaveStatusText">✓ Ready &amp; Synchronized</span>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Sticky Exam Footer -->
+  <footer class="exam-footer">
+    <div style="font-size: 13px; color: var(--text-muted);">
+      ITI College CBT Examination System &bull; Lab Invigilation Active
+    </div>
+
+    <div>
+      <button type="button" id="submitExamFooterBtn" class="btn btn-success btn-lg">
+        Submit Examination ✓
+      </button>
+    </div>
+  </footer>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/security.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/exam.js"></script>
+</body>
+</html>

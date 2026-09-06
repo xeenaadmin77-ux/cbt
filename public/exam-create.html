@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Examination - ITI College CBT</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/teacher.css" />
+</head>
+<body>
+  <nav class="teacher-navbar">
+    <div class="teacher-brand">
+      <img src="images/xeena_logo.png" alt="XEENA Institute Logo" class="college-logo-img" style="width: 36px; height: 36px;" />
+      <div>
+        <h2 style="font-size: 15px; font-weight: 700; color: #ffffff; line-height: 1.2;">Faculty Portal</h2>
+        <span class="college-name-display" style="font-size: 11px; color: #94a3b8;">XEENA INSTITUTE OF SKILL DEVELOPMENT</span>
+      </div>
+    </div>
+    <ul class="teacher-nav-links">
+      <li><a href="teacher-dashboard.html">📊 Overview</a></li>
+      <li><a href="exam-create.html" class="active">➕ Create Exam</a></li>
+      <li><a href="question-manager.html">❓ Question Bank</a></li>
+      <li><a href="results.html">📈 Results</a></li>
+      <li><a href="students-manager.html">👥 Students</a></li>
+      <li><a href="settings.html">⚙️ Settings &amp; Audit</a></li>
+    </ul>
+    <div>
+      <a href="teacher-dashboard.html" class="btn btn-sm btn-secondary" style="background: rgba(255,255,255,0.1); color: #fff; border: none;">← Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="teacher-wrapper" style="max-width: 800px;">
+    <div class="page-header">
+      <div class="page-title">
+        <h1>Create New Examination</h1>
+        <p>Define exam parameters, time constraints, passing threshold, and target ITI trade</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form id="createExamForm">
+        <div class="form-group">
+          <label class="form-label" for="examTitle">Examination Title</label>
+          <input 
+            type="text" 
+            id="examTitle" 
+            class="form-control" 
+            placeholder="e.g. Electrician Theory - Monthly Test February 2025" 
+            required 
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="examDescription">Description &amp; Syllabus Notes</label>
+          <textarea 
+            id="examDescription" 
+            class="form-control" 
+            rows="3" 
+            placeholder="e.g. Covers Modules 1 through 4: Basic Safety, Ohm's Law, Circuits, and Wire Joints."
+          ></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label" for="examTrade">Target ITI Trade</label>
+            <select id="examTrade" class="form-control" required>
+              <option value="All ITI Trades">All ITI Trades</option>
+              <option value="Electrician">Electrician</option>
+              <option value="Fitter">Fitter</option>
+              <option value="COPA (Computer Operator & Programming Assistant)">COPA (Computer Operator & Programming Assistant)</option>
+              <option value="Mechanic Motor Vehicle (MMV)">Mechanic Motor Vehicle (MMV)</option>
+              <option value="Welder">Welder</option>
+              <option value="Wireman">Wireman</option>
+              <option value="Turner">Turner</option>
+              <option value="Machinist">Machinist</option>
+              <option value="Electronics Mechanic">Electronics Mechanic</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="examMonth">
+              📅 Monthly Assessment Session (মাসিক পরীক্ষা চক্র)
+            </label>
+            <select id="examMonth" class="form-control" style="font-weight: 600;">
+              <option value="September 2026" selected>September 2026 (সেপ্টেম্বর ২০২৬ মূল্যায়ন)</option>
+              <option value="October 2026">October 2026 (অক্টোবর ২০২৬ মূল্যায়ন)</option>
+              <option value="November 2026">November 2026 (নভেম্বর ২০২৬ মূল্যায়ন)</option>
+              <option value="December 2026">December 2026 (ডিসেম্বর ২০২৬ মূল্যায়ন)</option>
+              <option value="January 2027">January 2027 (জানুয়ারী ২০২৭ মূল্যায়ন)</option>
+              <option value="Term End Final">Term End Final Exam (টার্ম ফাইনাল)</option>
+            </select>
+            <small style="color: var(--text-muted); font-size: 12px;">ছাত্রছাত্রীদের মাসিক অগ্রগতি পর্যবেক্ষণের জন্য মাস ভিত্তিক শ্রেণিবিভাগ।</small>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label" for="examDuration">Total Duration (in Minutes)</label>
+            <input 
+              type="number" 
+              id="examDuration" 
+              class="form-control" 
+              value="30" 
+              min="5" 
+              max="180" 
+              required 
+            />
+            <small style="color: var(--text-muted); font-size: 12px;">Timer is enforced strictly by the server.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="examPassMark">Passing Percentage (%)</label>
+            <input 
+              type="number" 
+              id="examPassMark" 
+              class="form-control" 
+              value="40" 
+              min="1" 
+              max="100" 
+              required 
+            />
+          </div>
+        </div>
+
+        <!-- Per Question Timer Configuration -->
+        <div class="form-group" style="background: #fffbeb; padding: 14px; border-radius: var(--radius-md); border: 1px solid #fef3c7;">
+          <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; color: #92400e;">
+            <input type="checkbox" id="enablePerQuestionTimer" onchange="document.getElementById('perQuestionTimerWrap').style.display = this.checked ? 'block' : 'none';" />
+            <span>⏱️ প্রতি প্রশ্নের জন্য নির্দিষ্ট টাইমার সক্রিয় করুন (Enable Per-Question Countdown Timer)</span>
+          </label>
+          <div id="perQuestionTimerWrap" style="display: none; margin-top: 10px; padding-left: 24px;">
+            <label class="form-label" for="perQuestionTimerSeconds" style="font-size: 13px;">সময়সীমা প্রতি প্রশ্নে (সেকেন্ড):</label>
+            <input type="number" id="perQuestionTimerSeconds" class="form-control" value="60" min="10" max="300" style="max-width: 180px;" />
+            <small style="display: block; margin-top: 4px; color: #78350f;">সময় শেষ হলে প্রশ্নটি স্বয়ংক্রিয়ভাবে লক হয়ে পরবর্তী প্রশ্নে এগিয়ে যাবে।</small>
+          </div>
+        </div>
+
+          <div class="form-group" style="padding-top: 24px;">
+            <label style="display: flex; align-items: flex-start; gap: 8px; font-weight: 600; cursor: pointer;">
+              <input type="checkbox" id="showResultImmediately" style="margin-top: 4px;" />
+              <div>
+                <span>ফলাফল তাৎক্ষণিক গোপন রাখুন (Hold results for teacher release)</span>
+                <small style="display: block; font-weight: normal; color: var(--text-muted);">Unchecked by default: ছাত্রছাত্রীরা শুধু পরীক্ষার সাবমিশন রিসিপ্ট পাবে, ফলাফল স্যার পরবর্তীতে প্রকাশ করবেন।</small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" style="background: #f8fafc; padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer;">
+            <input type="checkbox" id="examPublished" />
+            <span style="color: var(--primary);">Publish Exam Immediately (Make Visible to Students)</span>
+          </label>
+          <small style="display: block; margin-top: 4px; color: var(--text-muted);">
+            If unchecked, this exam will remain as Draft until you finish adding questions and choose to publish it.
+          </small>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+          <a href="teacher-dashboard.html" class="btn btn-secondary">Cancel</a>
+          <button type="submit" id="saveExamBtn" class="btn btn-primary btn-lg">
+            Save Exam &amp; Add Questions →
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/teacher.js"></script>
+</body>
+</html>

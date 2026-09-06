@@ -1,0 +1,106 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default Deny All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isTeacher() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/teachers/$(request.auth.uid)) ||
+        (request.auth.token.role != null && request.auth.token.role == 'teacher') ||
+        (request.auth.token.role != null && request.auth.token.role == 'admin') ||
+        (request.auth.token.email != null && request.auth.token.email == 'teamscartino07@gmail.com')
+      );
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Users Collection (Role management)
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isTeacher());
+      allow create, update, delete: if isTeacher();
+    }
+
+    // Students Roster Collection
+    match /students/{studentId} {
+      // Students can read only their own profile; only teachers can add/edit/delete
+      allow read: if isSignedIn() && (request.auth.uid == studentId || isTeacher());
+      allow write: if isTeacher();
+    }
+
+    // Teachers Roster Collection
+    match /teachers/{teacherId} {
+      allow read: if isSignedIn();
+      allow write: if isTeacher();
+    }
+
+    // Exams Collection
+    match /exams/{examId} {
+      // Students can read published exams; Teachers can read and write all exams
+      allow read: if isSignedIn() && (resource.data.published == true || isTeacher());
+      allow write: if isTeacher();
+
+      // Questions Subcollection:
+      // CRITICAL: Students CANNOT read or write questions directly.
+      // Questions (and their correct answers) are evaluated server-side by Cloud Functions.
+      match /questions/{questionId} {
+        allow read, write: if isTeacher();
+      }
+    }
+
+    // Standalone Questions Collection (if used)
+    match /questions/{questionId} {
+      allow read, write: if isTeacher();
+    }
+
+    // Exam Sessions Collection:
+    // Read: Student can read their own session; Teachers can read all.
+    // Write: Clients cannot write directly to sessions (Cloud Functions / Admin SDK only).
+    match /examSessions/{sessionId} {
+      allow read: if isSignedIn() && (resource.data.studentUid == request.auth.uid || isTeacher());
+      allow write: if false;
+    }
+
+    // Results Collection:
+    // Read: Student can read their own result; Teachers can read all.
+    // Write: Clients cannot write directly to results (Cloud Functions / Admin SDK only).
+    match /results/{resultId} {
+      allow read: if isSignedIn() && (resource.data.studentUid == request.auth.uid || isTeacher());
+      allow write: if false;
+    }
+
+    // Settings:
+    // Public branding is readable by all
+    match /settings/public_config {
+      allow read: if true;
+      allow write: if isTeacher();
+    }
+    // Private secrets (e.g. exit password) are completely forbidden from client SDKs
+    match /settings/invigilator_secret {
+      allow read, write: if false;
+    }
+    // Fallback for general settings docs
+    match /settings/{settingId} {
+      allow read: if isTeacher();
+      allow write: if isTeacher();
+    }
+
+    // Audit Logs:
+    // Readable only by Teachers; writable by authenticated users or server
+    match /auditLogs/{logId} {
+      allow read: if isTeacher();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+  }
+}

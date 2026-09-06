@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings &amp; Audit Trail - ITI College CBT</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/teacher.css" />
+</head>
+<body>
+  <nav class="teacher-navbar">
+    <div class="teacher-brand">
+      <img src="images/xeena_logo.png" alt="XEENA Institute Logo" class="college-logo-img" style="width: 36px; height: 36px;" />
+      <div>
+        <h2 style="font-size: 15px; font-weight: 700; color: #ffffff; line-height: 1.2;">Faculty Portal</h2>
+        <span class="college-name-display" style="font-size: 11px; color: #94a3b8;">XEENA INSTITUTE OF SKILL DEVELOPMENT</span>
+      </div>
+    </div>
+    <ul class="teacher-nav-links">
+      <li><a href="teacher-dashboard.html">📊 Overview</a></li>
+      <li><a href="exam-create.html">➕ Create Exam</a></li>
+      <li><a href="question-manager.html">❓ Question Bank</a></li>
+      <li><a href="results.html">📈 Results</a></li>
+      <li><a href="students-manager.html">👥 Students</a></li>
+      <li><a href="settings.html" class="active">⚙️ Settings &amp; Audit</a></li>
+    </ul>
+    <div>
+      <a href="teacher-dashboard.html" class="btn btn-sm btn-secondary" style="background: rgba(255,255,255,0.1); color: #fff; border: none;">← Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="teacher-wrapper">
+    <div class="page-header">
+      <div class="page-title">
+        <h1>College Configuration &amp; Invigilator Audit</h1>
+        <p>Customize institution branding, lab parameters, early exit credentials, and inspect security events</p>
+      </div>
+    </div>
+
+    <!-- College Settings Form -->
+    <div class="form-card" style="max-width: 800px;">
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--primary);">
+        🏛️ Institution &amp; Lab Parameters
+      </h2>
+
+      <form id="collegeSettingsForm">
+        <div class="form-group">
+          <label class="form-label" for="cfgCollegeName">Institution / College Name</label>
+          <input 
+            type="text" 
+            id="cfgCollegeName" 
+            class="form-control" 
+            placeholder="e.g. Government Industrial Training Institute, Aliganj" 
+            required 
+          />
+          <small style="color: var(--text-muted); font-size: 12px;">This title appears across all candidate screens, tests, and printed scorecards.</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="cfgTagline">Sub-heading / Directorate</label>
+          <input 
+            type="text" 
+            id="cfgTagline" 
+            class="form-control" 
+            placeholder="e.g. Department of Vocational Education and Skill Development" 
+          />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label" for="cfgLabName">Computer Laboratory Name</label>
+            <input 
+              type="text" 
+              id="cfgLabName" 
+              class="form-control" 
+              placeholder="e.g. Lab 1 - Main IT Hall" 
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cfgExitPassword" style="color: var(--danger);">
+              Teacher Exit Password
+            </label>
+            <input 
+              type="text" 
+              id="cfgExitPassword" 
+              class="form-control" 
+              placeholder="e.g. InvigilatorPass2025" 
+              required 
+            />
+            <small style="color: var(--text-muted); font-size: 12px;">
+              Required when a candidate requests early exit. Verified securely server-side.
+            </small>
+          </div>
+        </div>
+
+        <button type="submit" id="saveSettingsBtn" class="btn btn-primary btn-lg">
+          Save Configuration Changes
+        </button>
+      </form>
+    </div>
+
+    <!-- Security & Anti-Cheating Audit Log -->
+    <div class="data-table-card">
+      <div class="data-table-header">
+        <h2>🛡️ Lab Terminal Audit Trail (Anti-Cheating Logs)</h2>
+        <button class="btn btn-sm btn-secondary" onclick="loadAuditLogs()">↻ Refresh Logs</button>
+      </div>
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Event Type</th>
+              <th>Student UID</th>
+              <th>Session ID</th>
+              <th>Incident Details</th>
+              <th>Recorded Time</th>
+            </tr>
+          </thead>
+          <tbody id="auditLogsTableBody">
+            <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading audit events...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/teacher.js"></script>
+</body>
+</html>
