@@ -6,12 +6,12 @@
 // Firebase Project Configuration
 // When deploying to production Firebase Hosting, paste your Firebase web credentials here.
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAld11Us4JowyaLnkc3vmfYv7CA_RC9Hkk",
+  authDomain: "cbt-exam77.firebaseapp.com",
+  projectId: "cbt-exam77",
+  storageBucket: "cbt-exam77.firebasestorage.app",
+  messagingSenderId: "398532692131",
+  appId: "1:398532692131:web:87466a6731487492635716"
 };
 
 // Authoritative API Base URL:
@@ -29,10 +29,29 @@ async function apiFetch(endpoint, options = {}) {
     'Accept': 'application/json'
   };
 
-  // Attach auth token / admission number if available
-  const user = getCurrentUser();
-  if (user && user.token) {
-    defaultHeaders['Authorization'] = `Bearer ${user.token}`;
+  // Attach a fresh Firebase ID token when a Firebase user is signed in.
+  // Firebase automatically refreshes the token when necessary.
+  try {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      const firebaseUser = firebase.auth().currentUser;
+
+      if (firebaseUser) {
+        const freshToken = await firebaseUser.getIdToken();
+        defaultHeaders['Authorization'] = `Bearer ${freshToken}`;
+      }
+    } else {
+      // Student login / fallback session token.
+      const user = getCurrentUser();
+      if (user && user.token) {
+        defaultHeaders['Authorization'] = `Bearer ${user.token}`;
+      }
+    }
+  } catch (authError) {
+    console.warn('Firebase token refresh failed:', authError);
+    const user = getCurrentUser();
+    if (user && user.token) {
+      defaultHeaders['Authorization'] = `Bearer ${user.token}`;
+    }
   }
 
   const config = {

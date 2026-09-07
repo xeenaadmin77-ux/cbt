@@ -3,6 +3,7 @@ import path from 'path';
 import cors from 'cors';
 import fs from 'fs';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getAuth } from "firebase-admin/auth";
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 
 const app = express();
@@ -559,15 +560,81 @@ function firestoreDelete(collection: string, docId: string) {
 getFirestoreDb();
 
 // ----------------------------------------------------
+// Firebase Authentication Middleware
+// ----------------------------------------------------
+async function authenticateFirebaseToken(req: any, res: any, next: any) {
+  const header = req.headers.authorization || '';
+
+  if (!header.startsWith('Bearer ')) {
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required.'
+    });
+  }
+
+  const token = header.slice(7).trim();
+
+  try {
+    const decodedToken = await getAuth().verifyIdToken(token);
+    const db = getFirestoreDb();
+
+    if (!db) {
+      return res.status(503).json({
+        success: false,
+        message: 'Authentication service is temporarily unavailable.'
+      });
+    }
+
+    const teacherDoc = await db.collection('teachers').doc(decodedToken.uid).get();
+
+    if (!teacherDoc.exists) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Teacher account is not authorized.'
+      });
+    }
+
+    const teacherData = teacherDoc.data() || {};
+    const role = teacherData.role || decodedToken.role;
+
+    if (role !== 'teacher' && role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Teacher permission required.'
+      });
+    }
+
+    req.firebaseUser = {
+      uid: decodedToken.uid,
+      email: decodedToken.email || teacherData.email || '',
+      name: teacherData.name || decodedToken.name || '',
+      role
+    };
+
+    next();
+  } catch (error: any) {
+    console.error('Firebase token verification failed:', error.message);
+
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid or expired authentication token.'
+    });
+  }
+}
+
+// ----------------------------------------------------
 // API ROUTES
 // ----------------------------------------------------
+
+// Protect all teacher/admin API endpoints with Firebase Authentication.
+app.use('/api/teacher', authenticateFirebaseToken);
 
 // 1. Settings & Branding
 app.get('/api/settings', (req, res) => {
   res.json({ success: true, settings });
 });
 
-app.post('/api/settings', (req, res) => {
+app.post('/api/settings', authenticateFirebaseToken, (req, res) => {
   const { collegeName, tagline, labName, exitPassword } = req.body;
   if (collegeName) settings.collegeName = collegeName;
   if (tagline !== undefined) settings.tagline = tagline;
@@ -641,24 +708,8 @@ app.post('/api/student-login', (req, res) => {
 });
 
 // 3. Teacher Authentication
-app.post('/api/teacher-login', (req, res) => {
-  const { email, password } = req.body;
-  // Pre-configured faculty credentials
-  if ((email === 'faculty@iti.edu' || email === 'admin@iti.edu' || email === 'admin') && 
-      (password === 'Admin@123' || password === 'admin' || password === 'admin123')) {
-    return res.json({
-      success: true,
-      user: {
-        uid: 'teacher_admin_01',
-        email: email,
-        name: 'Faculty Exam Controller',
-        role: 'teacher'
-      }
-    });
-  }
-
-  res.status(401).json({ success: false, message: 'Invalid faculty credentials. Contact lab supervisor.' });
-});
+// Teacher authentication is handled by Firebase Authentication on the client.
+// The server verifies the Firebase ID token through authenticateFirebaseToken.
 
 // 4. Available Exams for Student
 app.get('/api/available-exams', (req, res) => {

@@ -52,11 +52,11 @@ async function handleStudentLogin(event) {
 // Teacher / Invigilator Login Handler
 async function handleTeacherLogin(event) {
   event.preventDefault();
+
   const submitBtn = document.getElementById('teacherLoginBtn');
-  
   const emailInput = document.getElementById('teacherEmail');
   const passwordInput = document.getElementById('teacherPassword');
-  
+
   const email = emailInput ? emailInput.value.trim() : '';
   const password = passwordInput ? passwordInput.value : '';
 
@@ -65,26 +65,64 @@ async function handleTeacherLogin(event) {
     return;
   }
 
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    showAuthError('Firebase Authentication is not loaded. Please refresh the page.');
+    return;
+  }
+
   setButtonLoading(submitBtn, true, 'Authenticating Faculty...');
   clearAuthError();
 
   try {
-    const response = await apiFetch('/teacher-login', {
-      method: 'POST',
-      body: JSON.stringify({
-        email,
-        password
-      })
-    });
+    const credential = await firebase.auth().signInWithEmailAndPassword(email, password);
+    const firebaseUser = credential.user;
 
-    if (response.success && response.user) {
-      setCurrentUser(response.user, true);
-      window.location.href = 'teacher-dashboard.html';
-    } else {
-      showAuthError(response.message || 'Authentication failed. Unauthorized faculty account.');
+    if (!firebaseUser) {
+      throw new Error('Firebase authentication failed.');
     }
+
+    const token = await firebaseUser.getIdToken(true);
+
+    const user = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email || email,
+      name: firebaseUser.displayName || firebaseUser.email || email,
+      role: 'teacher',
+      token
+    };
+
+    setCurrentUser(user, true);
+
+    // Verify that this Firebase account is actually authorized as a teacher/admin.
+    const verifyResponse = await apiFetch('/teacher/exams');
+
+    if (!verifyResponse || verifyResponse.success === false) {
+      throw new Error('This Firebase account is not authorized for the Faculty Portal.');
+    }
+
+    window.location.href = 'teacher-dashboard.html';
+
   } catch (err) {
-    showAuthError(err.message || 'Invalid faculty credentials.');
+    console.error('Firebase teacher login error:', err);
+
+    // Remove any incomplete login state.
+    clearCurrentUser();
+
+    let message = 'Authentication failed. Please check your faculty email and password.';
+
+    if (err && err.code === 'auth/invalid-credential') {
+      message = 'Invalid faculty email or password.';
+    } else if (err && err.code === 'auth/user-disabled') {
+      message = 'This faculty account has been disabled.';
+    } else if (err && err.code === 'auth/too-many-requests') {
+      message = 'Too many login attempts. Please try again later.';
+    } else if (err && err.message && err.message.includes('not authorized')) {
+      message = err.message;
+    } else if (err && err.message) {
+      message = err.message;
+    }
+
+    showAuthError(message);
   } finally {
     setButtonLoading(submitBtn, false, 'Sign In to Faculty Portal');
   }
