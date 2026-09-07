@@ -14,6 +14,11 @@ const firebaseConfig = {
   appId: "1:398532692131:web:87466a6731487492635716"
 };
 
+if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+
 // Authoritative API Base URL:
 // In local development / Termux Node dev / AI Studio preview, uses current origin (/api)
 // When deployed to Firebase Hosting, Cloud Functions rewrite maps /api/** to functions.
